@@ -1,0 +1,118 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#111827">
+<link rel="manifest" href="manifest.webmanifest">
+<title>Net Effective Rent</title>
+<style>
+:root{--bg:#f4f5f7;--card:#fff;--text:#111827;--muted:#6b7280;--line:#e5e7eb;--accent:#111827;--accent2:#2563eb;--good:#047857}
+*{box-sizing:border-box} body{margin:0;background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","Segoe UI",sans-serif;-webkit-font-smoothing:antialiased}
+main{max-width:720px;margin:auto;padding:calc(18px + env(safe-area-inset-top)) 16px calc(28px + env(safe-area-inset-bottom))}
+h1{font-size:30px;letter-spacing:-.8px;margin:0 0 5px;font-weight:800}.sub{color:var(--muted);font-size:15px;margin-bottom:20px}
+.card{background:var(--card);border-radius:20px;padding:5px 16px;margin:0 0 16px;box-shadow:0 5px 18px #0000000b}
+.row{display:flex;align-items:center;gap:12px;min-height:62px;border-bottom:1px solid var(--line)}.row:last-child{border-bottom:0}
+.icon{width:27px;text-align:center;font-size:19px;color:var(--accent2)}.label{font-size:15px;font-weight:600;flex:1}.input{width:155px;text-align:right;border:0;outline:0;background:transparent;font:600 16px inherit;color:var(--text);padding:9px 0}
+.date{font:600 16px inherit}.help{font-size:12px;color:var(--muted);padding:0 0 14px 39px}
+button{border:0;border-radius:15px;padding:16px;width:100%;font:700 17px inherit;cursor:pointer}.calc{background:var(--accent);color:#fff;box-shadow:0 7px 16px #1118272b;margin-bottom:16px}.reset{background:transparent;color:#b91c1c;font-size:14px}
+.hero{background:var(--accent);color:#fff;border-radius:22px;padding:23px 20px;margin-bottom:12px}.hero .small{font-size:12px;letter-spacing:1.5px;font-weight:800;opacity:.7}.hero .big{font-size:43px;line-height:1.1;font-weight:850;letter-spacing:-1.3px;margin:5px 0}.hero .per{opacity:.7;font-size:14px}
+.stats{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px}.stat{background:var(--card);border-radius:16px;padding:14px 15px}.stat span{display:block;color:var(--muted);font-size:12px;margin-bottom:5px}.stat strong{font-size:16px}
+.scheduleBtn{background:var(--card);color:var(--text);border:1px solid var(--line);margin-bottom:10px}
+#results{display:none}.tablewrap{overflow:auto}.schedule{width:100%;border-collapse:collapse;font-size:12px;min-width:600px}.schedule th{text-align:left;color:var(--muted);font-size:11px;padding:9px 7px;border-bottom:1px solid var(--line)}.schedule td{padding:11px 7px;border-bottom:1px solid var(--line);white-space:nowrap}.due{font-weight:800}.conc{color:var(--good);font-weight:700}
+.modal{display:none;position:fixed;inset:0;background:#0007;z-index:5;padding:50px 10px env(safe-area-inset-bottom)}.modalbox{background:var(--card);max-width:900px;margin:auto;border-radius:22px;height:calc(100vh - 70px);overflow:auto;padding:18px}.modalhead{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}.close{width:auto;padding:7px 12px;background:var(--bg);font-size:14px}.note{font-size:12px;color:var(--muted);line-height:1.4;margin:14px 2px}
+@media(max-width:430px){.input{width:130px}.hero .big{font-size:38px}.row{min-height:60px}}
+</style>
+</head>
+<body>
+<main>
+  <h1>Net Effective Rent</h1>
+  <div class="sub">Fast lease-concession calculator for apartment deals.</div>
+
+  <section class="card">
+    <div class="row"><div class="icon">＄</div><div class="label">Monthly Gross Rent</div><input id="rent" class="input" inputmode="decimal" placeholder="$2,700"></div>
+    <div class="row"><div class="icon">▣</div><div class="label">Lease Term</div><div><input id="term" class="input" inputmode="numeric" value="13" style="width:95px"><span style="color:var(--muted);font-size:13px"> months</span></div></div>
+    <div class="row"><div class="icon">◷</div><div class="label">Move-In Date</div><input id="movein" class="input date" type="date"></div>
+    <div class="row"><div class="icon">🎁</div><div class="label">Concession — Months Free</div><div><input id="free" class="input" inputmode="numeric" value="0" style="width:75px"><span style="color:var(--muted);font-size:13px"> months</span></div></div>
+    <div class="row"><div class="icon">%</div><div class="label">Concession — Dollar Amount</div><input id="dollar" class="input" inputmode="decimal" placeholder="$0"></div>
+    <div class="row"><div class="icon">→</div><div class="label">Concession Starts on Full Lease Month #</div><div><span style="color:var(--muted);font-size:13px">Month </span><input id="start" class="input" inputmode="numeric" value="2" style="width:65px"></div></div>
+    <div class="row"><div class="icon">↔</div><div class="label">Spread Concession Over Full Months</div><div><input id="spread" class="input" inputmode="numeric" value="12" style="width:65px"><span style="color:var(--muted);font-size:13px"> months</span></div></div>
+  </section>
+
+  <div class="help">The concession is applied only to full calendar months, matching your Excel calculator. First and final partial periods are prorated.</div>
+  <button class="calc" onclick="calculate()">Calculate Rent</button>
+
+  <section id="results">
+    <div class="hero"><div class="small">NET EFFECTIVE RENT</div><div id="net" class="big">$0.00</div><div class="per">per month</div></div>
+    <div class="stats">
+      <div class="stat"><span>Total Gross Rent</span><strong id="gross">$0.00</strong></div>
+      <div class="stat"><span>Total Concession</span><strong id="concession">$0.00</strong></div>
+      <div class="stat"><span>Total Rent Actually Paid</span><strong id="paid">$0.00</strong></div>
+      <div class="stat"><span>Average Monthly Discount</span><strong id="avg">$0.00</strong></div>
+      <div class="stat"><span>Effective Discount</span><strong id="pct">0.0%</strong></div>
+      <div class="stat"><span>Lease End Date</span><strong id="end">—</strong></div>
+    </div>
+    <button class="scheduleBtn" onclick="openSchedule()">View Payment Schedule</button>
+    <button class="reset" onclick="resetApp()">Reset Calculator</button>
+  </section>
+</main>
+
+<div id="modal" class="modal">
+  <div class="modalbox">
+    <div class="modalhead"><h2 style="margin:0;font-size:22px">Payment Schedule</h2><button class="close" onclick="closeSchedule()">Done</button></div>
+    <div class="tablewrap"><table class="schedule"><thead><tr><th>Payment #</th><th>Period Start</th><th>Period End</th><th>Lease Month #</th><th>Days</th><th>Gross Rent</th><th>Concession</th><th>Amount Due</th></tr></thead><tbody id="tbody"></tbody></table></div>
+    <div class="note">This schedule follows the calculation structure in the uploaded Excel file, including the partial move-in period, full-month numbering, full-month concession eligibility, and prorated final period.</div>
+  </div>
+</div>
+
+<script>
+const $=id=>document.getElementById(id);
+function money(v){return new Intl.NumberFormat('en-US',{style:'currency',currency:'USD'}).format(v||0)}
+function num(id){return parseFloat($(id).value.replace(/[$,]/g,''))||0}
+function dateOnly(s){let [y,m,d]=s.split('-').map(Number);return new Date(y,m-1,d)}
+function iso(d){return d.toISOString().slice(0,10)}
+function fmt(d){return d.toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'})}
+function daysInMonth(d){return new Date(d.getFullYear(),d.getMonth()+1,0).getDate()}
+function eom(d){return new Date(d.getFullYear(),d.getMonth()+1,0)}
+function addMonths(d,n){return new Date(d.getFullYear(),d.getMonth()+n,d.getDate())}
+function calculate(){
+  const rent=num('rent'), term=Math.max(1,Math.floor(num('term'))), move=dateOnly($('movein').value),
+        free=Math.max(0,Math.floor(num('free'))), dollar=Math.max(0,num('dollar')),
+        start=Math.max(0,Math.floor(num('start'))), spread=Math.max(0,Math.floor(num('spread')));
+  if(!rent || !$('movein').value){alert('Enter a monthly rent and move-in date.');return}
+  const leaseEnd=new Date(addMonths(move,term)); leaseEnd.setDate(leaseEnd.getDate()-1);
+  const totalRequested=rent*free+dollar;
+  let periods=[], pStart=new Date(move), payment=1;
+  while(pStart<=leaseEnd){
+    const periodMonthStart=new Date(pStart.getFullYear(),pStart.getMonth(),1);
+    const periodEnd0=eom(pStart);
+    const pEnd=new Date(Math.min(periodEnd0.getTime(),leaseEnd.getTime()));
+    const days=Math.floor((pEnd-pStart)/86400000)+1;
+    const dim=daysInMonth(pStart);
+    const leaseMonth=(move.getDate()===1)?payment:Math.max(0,payment-1);
+    const gross=(payment===1 || pEnd.getTime()===leaseEnd.getTime()) ? rent*days/dim : rent;
+    const fullMonth=days===dim;
+    periods.push({payment,start:new Date(pStart),end:pEnd,leaseMonth,days,gross,fullMonth});
+    if(pEnd>=leaseEnd) break;
+    pStart=new Date(pEnd); pStart.setDate(pStart.getDate()+1); payment++;
+  }
+  const totalGross=periods.reduce((a,p)=>a+p.gross,0);
+  const totalConcession=Math.min(totalGross,totalRequested);
+  const monthlySpread=spread>0?totalConcession/spread:0;
+  periods.forEach(p=>{
+    p.concession=(p.leaseMonth>=start && p.leaseMonth<start+spread && p.fullMonth)?Math.min(p.gross,monthlySpread):0;
+    p.due=Math.max(0,p.gross-p.concession);
+  });
+  const paid=totalGross-totalConcession;
+  $('net').textContent=money(paid/term); $('gross').textContent=money(totalGross); $('concession').textContent=money(totalConcession);
+  $('paid').textContent=money(paid); $('avg').textContent=money(totalConcession/term); $('pct').textContent=(totalGross?totalConcession/totalGross:0).toLocaleString('en-US',{style:'percent',minimumFractionDigits:1,maximumFractionDigits:1}); $('end').textContent=fmt(leaseEnd);
+  $('tbody').innerHTML=periods.map(p=>`<tr><td>${p.payment}</td><td>${fmt(p.start)}</td><td>${fmt(p.end)}</td><td>${p.leaseMonth}</td><td>${p.days}</td><td>${money(p.gross)}</td><td class="conc">${money(p.concession)}</td><td class="due">${money(p.due)}</td></tr>`).join('');
+  $('results').style.display='block'; window.scrollTo({top:document.body.scrollHeight,behavior:'smooth'});
+}
+function resetApp(){['rent','dollar'].forEach(id=>$(id).value='');$('term').value='13';$('free').value='0';$('start').value='2';$('spread').value='12';$('movein').value=iso(new Date());$('results').style.display='none'}
+function openSchedule(){$('modal').style.display='block'} function closeSchedule(){$('modal').style.display='none'}
+$('movein').value='2026-10-25';
+if('serviceWorker' in navigator) window.addEventListener('load',()=>navigator.serviceWorker.register('sw.js'));
+</script>
+</body>
+</html>
