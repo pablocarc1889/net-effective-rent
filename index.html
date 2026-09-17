@@ -10,7 +10,10 @@
 :root{--bg:#f4f5f7;--card:#fff;--text:#111827;--muted:#6b7280;--line:#e5e7eb;--accent:#111827;--accent2:#2563eb;--good:#047857}
 *{box-sizing:border-box} body{margin:0;background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","Segoe UI",sans-serif;-webkit-font-smoothing:antialiased}
 main{max-width:720px;margin:auto;padding:calc(18px + env(safe-area-inset-top)) 16px calc(28px + env(safe-area-inset-bottom))}
-h1{font-size:30px;letter-spacing:-.8px;margin:0 0 5px;font-weight:800}.sub{color:var(--muted);font-size:15px;margin-bottom:20px}
+h1{font-size:27px;letter-spacing:-.7px;margin:0 0 4px;font-weight:800}.sub{color:var(--muted);font-size:14px;margin-bottom:18px}
+.brand{background:#0b0b0c;color:#fff;border-radius:22px;padding:18px 18px 20px;margin-bottom:18px;box-shadow:0 8px 22px #0000001c}
+.brandtop{display:flex;align-items:center;gap:14px}.brandlogo{width:58px;height:58px;flex:0 0 58px}.brandname{font-family:Georgia,serif;letter-spacing:4px;font-size:20px;color:#f0d3a2}.brandliving{font-size:11px;letter-spacing:5px;color:#f0d3a2;margin-top:2px}.brandtag{margin-top:14px;padding-top:12px;border-top:1px solid #b78b4a66;font-size:9px;letter-spacing:2.5px;color:#eee;text-align:center}
+
 .card{background:var(--card);border-radius:20px;padding:5px 16px;margin:0 0 16px;box-shadow:0 5px 18px #0000000b}
 .row{display:flex;align-items:center;gap:12px;min-height:62px;border-bottom:1px solid var(--line)}.row:last-child{border-bottom:0}
 .icon{width:27px;text-align:center;font-size:19px;color:var(--accent2)}.label{font-size:15px;font-weight:600;flex:1}.input{width:155px;text-align:right;border:0;outline:0;background:transparent;font:600 16px inherit;color:var(--text);padding:9px 0}
@@ -26,8 +29,24 @@ button{border:0;border-radius:15px;padding:16px;width:100%;font:700 17px inherit
 </head>
 <body>
 <main>
-  <h1>Net Effective Rent</h1>
-  <div class="sub">Fast lease-concession calculator for apartment deals.</div>
+  <section class="brand">
+    <div class="brandtop">
+      <svg class="brandlogo" viewBox="0 0 100 100" aria-label="Druetta Living logo" role="img">
+        <path d="M12 48 L50 13 L88 48" fill="none" stroke="#f0d3a2" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+        <rect x="43" y="39" width="14" height="16" rx="1" fill="#f0d3a2"/>
+        <path d="M47 39v16M43 47h14" stroke="#0b0b0c" stroke-width="2"/>
+        <path d="M16 56 H84" stroke="#f0d3a2" stroke-width="2"/>
+        <path d="M25 67 H75" stroke="#f0d3a2" stroke-width="1.5"/>
+      </svg>
+      <div>
+        <div class="brandname">DRUETTA</div>
+        <div class="brandliving">LIVING</div>
+      </div>
+    </div>
+    <div class="brandtag">YOUR HOME. &nbsp; YOUR LIFESTYLE. &nbsp; OUR PRIORITY.</div>
+  </section>
+  <h1>Net Effective Rent Calculator</h1>
+  <div class="sub">Make the numbers work for you.</div>
 
   <section class="card">
     <div class="row"><div class="icon">＄</div><div class="label">Monthly Gross Rent</div><input id="rent" class="input" inputmode="decimal" placeholder="$2,700"></div>
@@ -43,7 +62,7 @@ button{border:0;border-radius:15px;padding:16px;width:100%;font:700 17px inherit
   <button class="calc" onclick="calculate()">Calculate Rent</button>
 
   <section id="results">
-    <div class="hero"><div class="small">NET EFFECTIVE RENT</div><div id="net" class="big">$0.00</div><div class="per">per month</div></div>
+    <div class="hero"><div class="small">DRUETTA LIVING • NET EFFECTIVE RENT</div><div id="net" class="big">$0.00</div><div class="per">per month</div></div>
     <div class="stats">
       <div class="stat"><span>Total Gross Rent</span><strong id="gross">$0.00</strong></div>
       <div class="stat"><span>Total Concession</span><strong id="concession">$0.00</strong></div>
